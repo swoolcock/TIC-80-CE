@@ -498,19 +498,46 @@ static void setSidePixel(s32 x, s32 y)
     }
 }
 
-static void drawEllipse(tic_mem* memory, s32 x0, s32 y0, s32 x1, s32 y1, u8 color, PixelFunc pix)
+static void drawEllipse(tic_mem* memory, s32 x0, s32 y0, s32 x1, s32 y1, s32 r, u8 color, PixelFunc pix)
 {
-    if(x0 > x1 || y0 > y1)
+    if(x0 >= x1 || y0 >= y1)
         return;
 
-    s64 a = abs(x1 - x0), b = abs(y1 - y0), b1 = b & 1; /* values of diameter */
+    tic_core *core = (tic_core*)memory;
+
+    s64 a = abs(x1 - x0), b2 = abs(y1 - y0), b = b2;
+    if (r > 0)
+    {
+        r = MIN(r,MIN(a/2, b/2));
+        a = b = r * 2;
+    }
+
+    s64 b1 = b & 1; /* values of diameter */
     s64 dx = 4 * (1 - a) * b * b, dy = 4 * (b1 + 1) * a * a; /* error increment */
     s64 err = dx + dy + b1 * a * a, e2; /* error of 1.step */
 
+    if (r > 0)
+    {
+        s32 oldy1 = y1;
+        y1 = y0 + r; y0 = oldy1 - r;
+    }
+    else
+    {
+        y0 += (b + 1) / 2; y1 = y0 - b1;   /* starting pixel */
+    }
+
     if (x0 > x1) { x0 = x1; x1 += a; } /* if called with swapped pos32s */
-    if (y0 > y1) y0 = y1; /* .. exchange them */
-    y0 += (b + 1) / 2; y1 = y0 - b1;   /* starting pixel */
+    // if (y0 > y1) y0 = y1; /* .. exchange them */
     a *= 8 * a; b1 = 8 * b * b;
+
+    int ys = y1 > y0 ? 1 : -1;
+    for (int y2 = y0; y2 != y1; y2 += ys)
+    {
+        pix(memory, x0, y2, color);
+        pix(memory, x1, y2, color);
+    }
+
+    if (r == 0) return;
 
     do
     {
@@ -564,25 +591,37 @@ static void drawSidesBuffer(tic_mem* memory, s32 y0, s32 y1, u8 color)
 void tic_api_circ(tic_mem* memory, s32 x, s32 y, s32 r, u8 color)
 {
     initSidesBuffer();
-    drawEllipse(memory, x - r, y - r, x + r, y + r, 0, setElliSide);
+    drawEllipse(memory, x - r, y - r, x + r, y + r, -1, 0, setElliSide);
     drawSidesBuffer(memory, y - r, y + r + 1, mapColor(memory, color));
 }
 
 void tic_api_circb(tic_mem* memory, s32 x, s32 y, s32 r, u8 color)
 {
-    drawEllipse(memory, x - r, y - r, x + r, y + r, mapColor(memory, color), setElliPixel);
+    drawEllipse(memory, x - r, y - r, x + r, y + r, -1, mapColor(memory, color), setElliPixel);
 }
 
 void tic_api_elli(tic_mem* memory, s32 x, s32 y, s32 a, s32 b, u8 color)
 {
     initSidesBuffer();
-    drawEllipse(memory, x - a, y - b, x + a, y + b, 0, setElliSide);
+    drawEllipse(memory, x - a, y - b, x + a, y + b, -1, 0, setElliSide);
     drawSidesBuffer(memory, y - b, y + b + 1, mapColor(memory, color));
 }
 
 void tic_api_ellib(tic_mem* memory, s32 x, s32 y, s32 a, s32 b, u8 color)
 {
-    drawEllipse(memory, x - a, y - b, x + a, y + b, mapColor(memory, color), setElliPixel);
+    drawEllipse(memory, x - a, y - b, x + a, y + b, -1, mapColor(memory, color), setElliPixel);
+}
+
+void tic_api_rrect(tic_mem* memory, s32 x, s32 y, s32 width, s32 height, s32 radius, u8 color)
+{
+    initSidesBuffer();
+    drawEllipse(memory, x, y, x + width, y + height, radius, 0, setElliSide);
+    drawSidesBuffer(memory, y, y + height + 1, mapColor(memory, color));
+}
+
+void tic_api_rrectb(tic_mem* memory, s32 x, s32 y, s32 width, s32 height, s32 radius, u8 color)
+{
+    drawEllipse(memory, x, y, x + width, y + height, radius, color, setElliPixel);
 }
 
 static inline float initLine(float *x0, float *x1, float *y0, float *y1)

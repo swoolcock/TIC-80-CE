@@ -325,6 +325,52 @@ static s32 lua_rectb(lua_State* lua)
     return 0;
 }
 
+static s32 lua_rrect(lua_State* lua)
+{
+    s32 top = lua_gettop(lua);
+
+    if(top == 6)
+    {
+        s32 x = getLuaNumber(lua, 1);
+        s32 y = getLuaNumber(lua, 2);
+        s32 w = getLuaNumber(lua, 3);
+        s32 h = getLuaNumber(lua, 4);
+        s32 radius = getLuaNumber(lua, 5);
+        s32 color = getLuaNumber(lua, 6);
+
+        tic_core* core = getLuaCore(lua);
+        tic_mem* tic = (tic_mem*)core;
+
+        core->api.rrect(tic, x, y, w, h, radius, color);
+    }
+    else luaL_error(lua, "invalid parameters, rrect(x,y,w,h,radius,color)\n");
+
+    return 0;
+}
+
+static s32 lua_rrectb(lua_State* lua)
+{
+    s32 top = lua_gettop(lua);
+
+    if(top == 6)
+    {
+        s32 x = getLuaNumber(lua, 1);
+        s32 y = getLuaNumber(lua, 2);
+        s32 w = getLuaNumber(lua, 3);
+        s32 h = getLuaNumber(lua, 4);
+        s32 radius = getLuaNumber(lua, 5);
+        s32 color = getLuaNumber(lua, 6);
+
+        tic_core* core = getLuaCore(lua);
+        tic_mem* tic = (tic_mem*)core;
+
+        core->api.rrectb(tic, x, y, w, h, radius, color);
+    }
+    else luaL_error(lua, "invalid parameters, rectb(x,y,w,h,radius,color)\n");
+
+    return 0;
+}
+
 static s32 lua_circ(lua_State* lua)
 {
     s32 top = lua_gettop(lua);
