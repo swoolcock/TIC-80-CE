@@ -50,6 +50,7 @@ extern bool parse_note(const char* noteStr, s32* note, s32* octave);
 typedef struct
 {
     gravity_vm *vm;
+    tic_mem* tic;
     gravity_delegate_t delegate;
     gravity_closure_t *borderFunction;      // BDR_FN
     gravity_closure_t *bootFunction;        // BOOT_FN
@@ -1068,6 +1069,120 @@ static bool grav_ffts(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uin
     double end_freq = nargs == 3 ? grav_get_float(args[2]) : -1;
 
     RETURN_VALUE(VALUE_FROM_FLOAT(core->api.ffts(tic, start_freq, end_freq)), rindex);
+}
+
+// MARK: fftr
+static bool grav_fftr(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs > 3 || nargs < 2) RETURN_ERROR("invalid parameters, fftr start_freq [end_freq]");
+
+    double start_freq = grav_get_float(args[1]);
+    double end_freq = nargs == 3 ? grav_get_float(args[2]) : -1;
+
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.fftr(tic, start_freq, end_freq)), rindex);
+}
+
+// MARK: fftrs
+static bool grav_fftrs(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs > 3 || nargs < 2) RETURN_ERROR("invalid parameters, fftrs start_freq [end_freq]");
+
+    double start_freq = grav_get_float(args[1]);
+    double end_freq = nargs == 3 ? grav_get_float(args[2]) : -1;
+
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.fftrs(tic, start_freq, end_freq)), rindex);
+}
+
+// MARK: vqt
+static bool grav_vqt(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs != 2) RETURN_ERROR("invalid parameters, vqt bin");
+
+    double bin = grav_get_float(args[1]);
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.vqt(tic, bin)), rindex);
+}
+
+// MARK: vqts
+static bool grav_vqts(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs != 2) RETURN_ERROR("invalid parameters, vqts bin");
+
+    double bin = grav_get_float(args[1]);
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.vqts(tic, bin)), rindex);
+}
+
+// MARK: vqtr
+static bool grav_vqtr(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs != 2) RETURN_ERROR("invalid parameters, vqtr bin");
+
+    double bin = grav_get_float(args[1]);
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.vqtr(tic, bin)), rindex);
+}
+
+// MARK: vqtrs
+static bool grav_vqtrs(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs != 2) RETURN_ERROR("invalid parameters, vqtrs bin");
+
+    double bin = grav_get_float(args[1]);
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.vqtrs(tic, bin)), rindex);
+}
+
+// MARK: vqtw
+static bool grav_vqtw(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs != 2) RETURN_ERROR("invalid parameters, vqtw bin");
+
+    double bin = grav_get_float(args[1]);
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.vqtw(tic, bin)), rindex);
+}
+
+// MARK: vqtsw
+static bool grav_vqtsw(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs != 2) RETURN_ERROR("invalid parameters, vqtsw bin");
+
+    double bin = grav_get_float(args[1]);
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.vqtsw(tic, bin)), rindex);
+}
+
+// MARK: vqtrw
+static bool grav_vqtrw(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs != 2) RETURN_ERROR("invalid parameters, vqtrw bin");
+
+    double bin = grav_get_float(args[1]);
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.vqtrw(tic, bin)), rindex);
+}
+
+// MARK: vqtrsw
+static bool grav_vqtrsw(gravity_vm *vm, gravity_value_t *args, uint16_t nargs, uint32_t rindex)
+{
+    TIC_GRAVITY_GET_CORE(vm, tic, core);
+
+    if (nargs != 2) RETURN_ERROR("invalid parameters, vqtrsw bin");
+
+    double bin = grav_get_float(args[1]);
+    RETURN_VALUE(VALUE_FROM_FLOAT(core->api.vqtrsw(tic, bin)), rindex);
 }
 
 // endregion
