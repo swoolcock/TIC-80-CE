@@ -39,8 +39,15 @@ if(BUILD_WITH_GRAVITY)
     list(APPEND GRAVITY_SRC ${CMAKE_SOURCE_DIR}/src/api/parse_note.c)
 
     add_library(gravity ${TIC_RUNTIME} ${GRAVITY_SRC})
-    target_compile_options(gravity PRIVATE -g -O0) # TODO: remove
     target_compile_definitions(gravity PRIVATE TIC_BUILD_WITH_GRAVITY=1)
+
+    # Gravity needs some compatibility stuff for MINGW on Windows
+    if (MINGW AND WIN32)
+        target_link_libraries(gravity PUBLIC shlwapi)
+        target_compile_options(gravity PRIVATE
+            -include "${CMAKE_SOURCE_DIR}/src/api/gravity_compat.h"
+        )
+    endif()
 
     if(NOT BUILD_STATIC)
         set_target_properties(gravity PROPERTIES PREFIX "")
